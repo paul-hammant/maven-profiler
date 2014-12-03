@@ -13,6 +13,9 @@ import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.sisu.launch.InjectedTestCase;
+import org.junit.Assert;
+
+import java.io.File;
 
 public class LifecycleProfilerTest extends InjectedTestCase {
 
@@ -50,7 +53,12 @@ public class LifecycleProfilerTest extends InjectedTestCase {
     p2.addPhaseProfile(ph2);
     s.addProjectProfile(p2);
 
-    sessionProfileRenderer.render(s);
+    // for informational purposes
+    sessionProfileRenderer.render(s, "");
+
+    sessionProfileRenderer.render(s, "temp");
+    File tempFile = new File("temp");
+    Assert.assertTrue(tempFile.exists());
   }
 
   protected MavenProject project(String g, String a, String v) {

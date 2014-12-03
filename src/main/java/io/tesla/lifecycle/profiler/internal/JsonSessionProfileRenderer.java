@@ -23,38 +23,64 @@ import javax.inject.Singleton;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.HashMap;
 
 @Named
 @Singleton
 public class JsonSessionProfileRenderer implements SessionProfileRenderer {
 
-  public void render(SessionProfile sessionProfile) {
+    /**
+     * Renders timing information in a JSON format
+     *
+     * @param sessionProfile The session profile containing timing information
+     * @param filePath       The file path to render the JSON file to.
+     *                       For whitespace or "-", the output is written to standard output.
+     */
+    public void render(SessionProfile sessionProfile, String filePath) {
 
-    HashMap<String, Object> items = new HashMap<String, Object>();
-    for(ProjectProfile pp : sessionProfile.getProjectProfiles()) {
-        HashMap<String, Object> projectItems = new HashMap<String, Object>();
-        items.put(pp.getProjectName(), projectItems);
+        HashMap<String, Object> items = new HashMap<String, Object>();
+        for (ProjectProfile pp : sessionProfile.getProjectProfiles()) {
+            HashMap<String, Object> projectItems = new HashMap<String, Object>();
+            items.put(pp.getProjectName(), projectItems);
 
-      for(PhaseProfile phaseProfile : pp.getPhaseProfile()) {
-          HashMap<String, Object> phaseItems = new HashMap<String, Object>();
-          projectItems.put(phaseProfile.getPhase(), phaseItems);
+            for (PhaseProfile phaseProfile : pp.getPhaseProfile()) {
+                HashMap<String, Object> phaseItems = new HashMap<String, Object>();
+                projectItems.put(phaseProfile.getPhase(), phaseItems);
 
-          phaseItems.put("total_time", phaseProfile.getElapsedTime());
+                phaseItems.put("total_time", phaseProfile.getElapsedTime());
 
-        for(MojoProfile mp : phaseProfile.getMojoProfiles()) {
-            phaseItems.put(mp.getId(), mp.getElapsedTime());
+                for (MojoProfile mp : phaseProfile.getMojoProfiles()) {
+                    phaseItems.put(mp.getId(), mp.getElapsedTime());
+                }
+            }
         }
-      }
-    }
 
-    ObjectMapper mapper = new ObjectMapper();
-      mapper.enable(SerializationFeature.INDENT_OUTPUT);
-      try {
-          mapper.writeValue(System.out, items);
-      } catch(java.io.IOException ex) {
-          throw new RuntimeException("Cannot serialize profiled projects.", ex);
-      }
-  }
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+
+        // write the structure out
+        java.io.OutputStream outfile = System.out;
+        try {
+            if(!filePath.trim().equals("") && !filePath.trim().equals("-")) {
+                outfile = new FileOutputStream(filePath);
+            }
+            mapper.writeValue(outfile, items);
+        } catch (java.io.IOException ex) {
+            throw new RuntimeException("Cannot serialize profiled projects.", ex);
+        } finally {
+            if(outfile != System.out) {
+                try {
+                    outfile.close();
+                } catch(java.io.IOException ex) {
+                    throw new RuntimeException("Could not close underlying file.", ex);
+                }
+            }
+        }
+    }
 
 }

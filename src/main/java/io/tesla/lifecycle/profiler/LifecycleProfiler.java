@@ -65,7 +65,7 @@ public class LifecycleProfiler extends AbstractEventSpy {
         //
         sessionProfile.stop();
         if (System.getProperty(TESLA_PROFILE) != null) {
-          renderer.render(sessionProfile);
+          renderer.render(sessionProfile, System.getProperty(TESLA_PROFILE));
         }
       } else if (executionEvent.getType() == ExecutionEvent.Type.ProjectStarted) {
         //

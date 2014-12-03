@@ -25,8 +25,9 @@ public class DefaultSessionProfileRenderer implements SessionProfileRenderer {
   public DefaultSessionProfileRenderer(Timer timer) {
     this.timer = timer;
   }
-  
-  public void render(SessionProfile sessionProfile) {
+
+  /** <code>filePath</code> is ignored */
+  public void render(SessionProfile sessionProfile, String filePath) {
     
     for(ProjectProfile pp : sessionProfile.getProjectProfiles()) {
       render("");
