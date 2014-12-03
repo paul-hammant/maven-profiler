@@ -18,13 +18,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-@Named
-@Singleton
 public class DefaultSessionProfileRenderer implements SessionProfileRenderer {
 
   private Timer timer;
   
-  @Inject
   public DefaultSessionProfileRenderer(Timer timer) {
     this.timer = timer;
   }
