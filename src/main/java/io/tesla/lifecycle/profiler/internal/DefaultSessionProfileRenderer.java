@@ -14,6 +14,9 @@ import io.tesla.lifecycle.profiler.SessionProfile;
 import io.tesla.lifecycle.profiler.SessionProfileRenderer;
 import io.tesla.lifecycle.profiler.Timer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -30,22 +33,46 @@ public class DefaultSessionProfileRenderer implements SessionProfileRenderer {
   }
   
   public void render(SessionProfile sessionProfile) {
-    
+	Map<String, Long> cumulativepluginTime = new HashMap<String, Long>();
+	render("#################################################");
+	render("#			Build time breakup					#");
+	render("#################################################");
+    render("Project Name,Phase,Plugin,Time,Formatted Time");
     for(ProjectProfile pp : sessionProfile.getProjectProfiles()) {
-      render("");
-      render(pp.getProjectName());
-      render("");
       for(PhaseProfile phaseProfile : pp.getPhaseProfile()) {
-        render("  " + phaseProfile.getPhase() + " " + timer.format(phaseProfile.getElapsedTime()));
         for(MojoProfile mp : phaseProfile.getMojoProfiles()) {
-          render("    " + mp.getId() + timer.format(mp.getElapsedTime())); 
+          render(pp.getProjectName()+","+phaseProfile.getPhase()+","+mp.getId()+","+mp.getElapsedTime()+","+timer.format(mp.getElapsedTime()));
+          populateCumulativepluginTime(cumulativepluginTime, mp);
         }
-        render("");
       }
     }
+    
+    render("#################################################");
+	render("#			Cumulative Plugin time breakup		#");
+	render("#################################################");
+    render("Plugin Name,Time,Formatted Time");
+    for(String pluginName : cumulativepluginTime.keySet()){
+    	Long pluginTime = cumulativepluginTime.get(pluginName);
+    	String formattedTime = timer.format(pluginTime);
+    	render(pluginName+","+pluginTime+","+formattedTime);
+    }
+    
   }
   
-  private void render(String s) {
+  private void populateCumulativepluginTime(Map<String, Long> cumulativepluginTime, MojoProfile mp) {
+	  Long pluginTime = cumulativepluginTime.get(mp.getId());
+	  Long elapsedTime = mp.getElapsedTime();
+	  if(pluginTime == null){
+		  pluginTime = elapsedTime;
+	  }
+	  else{
+		  pluginTime = pluginTime + elapsedTime;
+	  }
+	  cumulativepluginTime.put(mp.getId(), pluginTime);
+	
+}
+
+private void render(String s) {
     System.out.println(s);
   }
 }

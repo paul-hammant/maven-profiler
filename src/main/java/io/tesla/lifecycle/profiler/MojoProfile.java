@@ -21,7 +21,7 @@ public class MojoProfile extends Profile {
   }
   
   public String getId() {
-    return mojoExecution.getGroupId() + ":" + mojoExecution.getArtifactId() + ":" + mojoExecution.getVersion() + " (" + mojoExecution.getExecutionId() + ") ";
+    return mojoExecution.getArtifactId() + ":" + mojoExecution.getVersion() + " (" + mojoExecution.getExecutionId() + ") ";
   }
 
 }
