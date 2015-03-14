@@ -34,6 +34,7 @@ public class DefaultSessionProfileRenderer implements SessionProfileRenderer {
   
   public void render(SessionProfile sessionProfile) {
 	Map<String, Long> cumulativepluginTime = new HashMap<String, Long>();
+	Long totalTime = 0l;
 	render("#################################################");
 	render("#			Build time breakup					#");
 	render("#################################################");
@@ -41,11 +42,14 @@ public class DefaultSessionProfileRenderer implements SessionProfileRenderer {
     for(ProjectProfile pp : sessionProfile.getProjectProfiles()) {
       for(PhaseProfile phaseProfile : pp.getPhaseProfile()) {
         for(MojoProfile mp : phaseProfile.getMojoProfiles()) {
+        	Long timeElapsed = mp.getElapsedTime();
           render(pp.getProjectName()+","+phaseProfile.getPhase()+","+mp.getId()+","+mp.getElapsedTime()+","+timer.format(mp.getElapsedTime()));
           populateCumulativepluginTime(cumulativepluginTime, mp);
+          totalTime = totalTime + timeElapsed;
         }
       }
     }
+    render(",,Total,"+totalTime+","+timer.format(totalTime));
     
     render("#################################################");
 	render("#			Cumulative Plugin time breakup		#");
@@ -56,7 +60,7 @@ public class DefaultSessionProfileRenderer implements SessionProfileRenderer {
     	String formattedTime = timer.format(pluginTime);
     	render(pluginName+","+pluginTime+","+formattedTime);
     }
-    
+    render("Total,"+totalTime+","+timer.format(totalTime));
   }
   
   private void populateCumulativepluginTime(Map<String, Long> cumulativepluginTime, MojoProfile mp) {

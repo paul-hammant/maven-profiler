@@ -62,4 +62,9 @@ public class DefaultTimer implements Timer {
 
     return msg.toString();
   }
+  
+  public static void main (String[] args){
+	  DefaultTimer t = new DefaultTimer();
+	  System.out.println(t.format(675534));
+  }
 }
