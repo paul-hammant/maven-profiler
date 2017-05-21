@@ -21,18 +21,14 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-@Named
-@Singleton
 public class DefaultSessionProfileRenderer implements SessionProfileRenderer {
 
   private Timer timer;
   
-  @Inject
   public DefaultSessionProfileRenderer(Timer timer) {
     this.timer = timer;
   }
-  
-  public void render(SessionProfile sessionProfile) {
+    public void render(SessionProfile sessionProfile, String filePath) {
 	Map<String, Long> cumulativepluginTime = new HashMap<String, Long>();
 	Long totalTime = 0l;
 	render("#################################################");

@@ -65,7 +65,7 @@ public class LifecycleProfiler extends AbstractEventSpy {
         //
         sessionProfile.stop();
         if (System.getProperty(TESLA_PROFILE) != null) {
-          renderer.render(sessionProfile);
+          renderer.render(sessionProfile, System.getProperty(TESLA_PROFILE));
         }
       } else if (executionEvent.getType() == ExecutionEvent.Type.ProjectStarted) {
         //
@@ -73,6 +73,10 @@ public class LifecycleProfiler extends AbstractEventSpy {
         //
         projectProfile = new ProjectProfile(executionEvent.getProject());
       } else if (executionEvent.getType() == ExecutionEvent.Type.ProjectSucceeded || executionEvent.getType() == ExecutionEvent.Type.ProjectFailed) {
+          if (phaseProfile != null) {
+            phaseProfile.stop();
+            projectProfile.addPhaseProfile(phaseProfile);
+           }
         //
         //
         //
