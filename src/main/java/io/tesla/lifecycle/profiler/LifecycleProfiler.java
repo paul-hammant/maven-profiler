@@ -79,7 +79,12 @@ public class LifecycleProfiler extends AbstractEventSpy {
            }
         //
         //
-        //
+        if (phaseProfile != null) {
+            phaseProfile.stop();
+            projectProfile.addPhaseProfile(phaseProfile);
+            phaseProfile = null;
+        }
+
         projectProfile.stop();
         sessionProfile.addProjectProfile(projectProfile);
       } else if (executionEvent.getType() == ExecutionEvent.Type.MojoStarted) {
