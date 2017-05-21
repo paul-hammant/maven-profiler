@@ -6,3 +6,4 @@ release.properties
 deploy.sh
 .idea/
 *.iml
+temp
